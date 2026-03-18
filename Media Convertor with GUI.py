@@ -6,7 +6,6 @@ from tkinter import messagebox
 
 def importFile():
     global pathImport
-    global MainWindow
     pathImport = filedialog.askopenfilename()
     Label(MainWindow, text=fr"{pathImport}").grid(row=0, column=2, sticky=W)
 
@@ -48,7 +47,6 @@ def main():
 
     Button(MainWindow, text="Start", command=convert).grid(sticky=E)
     Button(MainWindow, text="Quit", command=quit).grid(sticky=E)
-
 
 
     MainWindow.mainloop()
