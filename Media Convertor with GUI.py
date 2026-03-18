@@ -2,10 +2,18 @@ import os
 from tkinter import *
 from tkinter.ttk import *
 
+def importFile():
+    pass
+
+def saveFile():
+    pass
+
+def convert():
+    pass
 
 def main():
 
-    MCG_VERSION = "build-0"
+    MCG_VERSION = "build-2"
     FFMPEG_PATH = ".\\ffmpeg\\bin\\ffmpeg.exe"
 
     mainWindow = Tk()
