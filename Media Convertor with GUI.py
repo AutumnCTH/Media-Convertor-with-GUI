@@ -13,7 +13,10 @@ def main():
 
 
     def saveFile():
-        pass
+        nonlocal pathImport, pathExport
+        pathExport = filedialog.asksaveasfilename()
+        Label(MainWindow, text=fr"{pathImport}").grid(row=1, column=2, sticky=W)
+
 
     def convert():
         pass
