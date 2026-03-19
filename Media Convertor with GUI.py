@@ -4,19 +4,19 @@ from tkinter.ttk import *
 from tkinter import filedialog
 from tkinter import messagebox
 
-def importFile():
-    global pathImport
-    pathImport = filedialog.askopenfilename()
-    Label(MainWindow, text=fr"{pathImport}").grid(row=0, column=2, sticky=W)
-
-
-def saveFile():
-    pass
-
-def convert():
-    pass
 
 def main():
+    def importFile():
+        nonlocal pathImport
+        pathImport = filedialog.askopenfilename()
+        Label(MainWindow, text=fr"{pathImport}").grid(row=0, column=2, sticky=W)
+
+
+    def saveFile():
+        pass
+
+    def convert():
+        pass
 
     MCG_VERSION = "build"
     PATH_FFMPEG = ".\\ffmpeg\\bin\\ffmpeg.exe"
