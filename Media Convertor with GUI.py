@@ -24,14 +24,14 @@ def main():
     def saveFile():
         nonlocal pathImport, pathExport
         pathExport = filedialog.asksaveasfilename()
-        Label(MainWindow, text=fr"{pathImport}").grid(row=1, column=2, sticky=W)
+        Label(MainWindow, text=fr"{pathExport}").grid(row=1, column=2, sticky=W)
 
 
     def convert():
         width = WidthSpinbox.get()
         height = HeightSpinbox.get()
         bitrate = BitrateSpinbox.get()
-        system(fr"{PATH_FFMPEG} -i {pathImport} -b:v {bitrate} -s {width}x{height} {pathExport}")
+        system(fr"{PATH_FFMPEG} -i '{pathImport}' -b:v {bitrate} -s {width}x{height} '{pathExport}'")
 
 
     MCG_VERSION = "build"
