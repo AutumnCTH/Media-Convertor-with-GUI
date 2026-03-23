@@ -6,15 +6,6 @@ from tkinter import messagebox
 
 
 def main():
-    def system(command:str):
-        try:
-            os.system(fr"{command}")
-        except Exception:
-            return 1
-        
-        return 0
-
-
     def importFile():
         nonlocal pathImport
         pathImport = filedialog.askopenfilename()
@@ -31,7 +22,8 @@ def main():
         width = WidthSpinbox.get()
         height = HeightSpinbox.get()
         bitrate = BitrateSpinbox.get()
-        system(fr"{PATH_FFMPEG} -i '{pathImport}' -b:v {bitrate} -s {width}x{height} '{pathExport}'")
+        a = f"{PATH_FFMPEG} -i '{pathImport}' -b:v {bitrate}k -s {width}x{height} '{pathExport}'"
+        os.system(a)
 
 
     MCG_VERSION = "build"
