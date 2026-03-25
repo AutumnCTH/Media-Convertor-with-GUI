@@ -3,9 +3,14 @@ from tkinter import *
 from tkinter.ttk import *
 from tkinter import filedialog
 from tkinter import messagebox
+from subprocess import Popen
 
 
 def main():
+    def sysCommand(inputCommand: list):
+        shellResult = Popen(inputCommand)
+        return shellResult.returncode
+    
     def importFile():
         nonlocal pathImport
         pathImport = filedialog.askopenfilename()
@@ -22,8 +27,8 @@ def main():
         width = WidthSpinbox.get()
         height = HeightSpinbox.get()
         bitrate = BitrateSpinbox.get()
-        a = f"{PATH_FFMPEG} -i '{pathImport}' -b:v {bitrate}k -s {width}x{height} '{pathExport}'"
-        os.system(a)
+        convertCmd = [PATH_FFMPEG, "-i", pathImport, "-b:v", f"{bitrate}k", "-s", f"{width}x{height}", pathExport]
+        sysCommand(convertCmd)
 
 
     MCG_VERSION = "build"
@@ -46,12 +51,15 @@ def main():
 
     WidthSpinbox = Spinbox(MainWindow, from_=0, to=300000, width=5)
     WidthSpinbox.grid(row=2, column=1, sticky=W)
+    WidthSpinbox.insert(0, "640")
 
     HeightSpinbox = Spinbox(MainWindow, from_=0, to=300000, width=5)
     HeightSpinbox.grid(row=2, column=3, sticky=W)
+    HeightSpinbox.insert(0, "360")
 
     BitrateSpinbox = Spinbox(MainWindow, from_=0, to=300000, width=5)
     BitrateSpinbox.grid(row=2, column=5, sticky=W)
+    BitrateSpinbox.insert(0, "1000")
 
     Button(MainWindow, text="Start", command=convert).grid(sticky=E)
     Button(MainWindow, text="Quit", command=quit).grid(sticky=E)
