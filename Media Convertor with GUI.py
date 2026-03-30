@@ -28,17 +28,29 @@ def main():
 
 
     def saveConfig():
-        pass
+        pathSaveConfig = filedialog.asksaveasfilename()
+        configFile = open(pathSaveConfig, 'w')
+        toWriteList = [pathImport, 
+                       pathExport,
+                       width,
+                       height,
+                       bitrate]
+        for i in toWriteList:
+            configFile.writelines(str(i) + "\n")
+
+        configFile.close()
 
 
     def getParameters():
-        pass
+        global width, height, bitrate
 
-    
-    def convert():
         width = WidthSpinbox.get()
         height = HeightSpinbox.get()
         bitrate = BitrateSpinbox.get()
+
+
+    def convert():
+        getParameters()
         convertCmd = [PATH_FFMPEG, "-i", pathImport, "-b:v", f"{bitrate}k", "-s", f"{width}x{height}", pathExport]
         sysCommand(convertCmd)
 
