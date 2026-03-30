@@ -23,6 +23,18 @@ def main():
         Label(MainWindow, text=fr"{pathExport}").grid(row=1, column=2, sticky=W)
 
 
+    def loadConfig():
+        pass
+
+
+    def saveConfig():
+        pass
+
+
+    def getParameters():
+        pass
+
+    
     def convert():
         width = WidthSpinbox.get()
         height = HeightSpinbox.get()
@@ -61,6 +73,8 @@ def main():
     BitrateSpinbox.grid(row=2, column=5, sticky=W)
     BitrateSpinbox.insert(0, "1000")
 
+    Button(MainWindow, text="Save Config", command=saveConfig).grid(row=3, column=0, sticky=W)
+    Button(MainWindow, text="Load Config", command=loadConfig).grid(row=3, column=1, sticky=W)
     Button(MainWindow, text="Start", command=convert).grid(sticky=E)
     Button(MainWindow, text="Quit", command=quit).grid(sticky=E)
 
