@@ -1,4 +1,3 @@
-import os
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import filedialog
@@ -42,7 +41,7 @@ def main():
 
 
     def getParameters():
-        global width, height, bitrate
+        nonlocal width, height, bitrate
 
         width = WidthSpinbox.get()
         height = HeightSpinbox.get()
@@ -59,6 +58,9 @@ def main():
     PATH_FFMPEG = ".\\ffmpeg\\bin\\ffmpeg.exe"
     pathImport = None
     pathExport = None
+    width = None
+    height = None
+    bitrate = None
 
     MainWindow = Tk()
     MainWindow.title("MCG " + MCG_VERSION)
