@@ -28,6 +28,7 @@ def main():
 
     def saveConfig():
         pathSaveConfig = filedialog.asksaveasfilename()
+        getParameters()
         configFile = open(pathSaveConfig, 'w')
         toWriteList = [pathImport, 
                        pathExport,
