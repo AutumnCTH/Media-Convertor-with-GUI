@@ -23,19 +23,18 @@ def main():
 
 
     def loadConfig():
-        pass
+        pathLoadConfig = filedialog.askopenfilename()
+        configFile = open(pathLoadConfig, 'r')
+        for i in configList:
+            i = configFile.readline()
 
 
     def saveConfig():
         pathSaveConfig = filedialog.asksaveasfilename()
         getParameters()
         configFile = open(pathSaveConfig, 'w')
-        toWriteList = [pathImport, 
-                       pathExport,
-                       width,
-                       height,
-                       bitrate]
-        for i in toWriteList:
+        
+        for i in configList:
             configFile.writelines(str(i) + "\n")
 
         configFile.close()
@@ -62,6 +61,11 @@ def main():
     width = None
     height = None
     bitrate = None
+    configList = [pathImport, 
+                       pathExport,
+                       width,
+                       height,
+                       bitrate]
 
     MainWindow = Tk()
     MainWindow.title("MCG " + MCG_VERSION)
