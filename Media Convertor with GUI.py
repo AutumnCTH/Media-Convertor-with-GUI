@@ -12,13 +12,13 @@ def main():
     
     def importFile():
         nonlocal pathImport
-        pathImport = filedialog.askopenfilename()
+        pathImport.getValue(filedialog.askopenfilename())
         Label(MainWindow, text=fr"{pathImport}").grid(row=0, column=2, sticky=W)
 
 
     def saveFile():
         nonlocal pathImport, pathExport
-        pathExport = filedialog.asksaveasfilename()
+        pathExport.getValue(filedialog.asksaveasfilename())
         Label(MainWindow, text=fr"{pathExport}").grid(row=1, column=2, sticky=W)
 
 
@@ -27,7 +27,7 @@ def main():
         configFile = open(pathLoadConfig, 'r')
         for i in configList:
             i = configFile.readline()
-
+            
 
     def saveConfig():
         pathSaveConfig = filedialog.asksaveasfilename()
@@ -35,7 +35,7 @@ def main():
         configFile = open(pathSaveConfig, 'w')
         
         for i in configList:
-            configFile.writelines(str(i) + "\n")
+            configFile.writelines(str(i.selfValue) + "\n")
 
         configFile.close()
 
@@ -43,9 +43,9 @@ def main():
     def getParameters():
         nonlocal width, height, bitrate
 
-        width = WidthSpinbox.get()
-        height = HeightSpinbox.get()
-        bitrate = BitrateSpinbox.get()
+        width.getValue(WidthSpinbox.get())
+        height.getValue(HeightSpinbox.get())
+        bitrate.getValue(BitrateSpinbox.get())
 
 
     def convert():
@@ -56,38 +56,38 @@ def main():
     class ConfigParameter:
         dataType = ''
         gridPosition = 0
-        selfValue = None
+        value = None
         def __init__(self, dataType, gridPosition):
             self.dataType = dataType
             self.gridPosition = gridPosition
 
-        def getValue(self, selfValue):
-            self.selfValue = selfValue
+        def getValue(self, value):
+            self.value = value
 
 
     class ConfigPath(ConfigParameter):
         def loadPara(self):
-            Label(MainWindow, text=fr"{self.selfValue}").grid(row=self.gridPosition, column=2, sticky=W)
+            Label(MainWindow, text=fr"{self.value}").grid(row=self.gridPosition, column=2, sticky=W)
                 #gridPosition Import is 0, export = 1
 
     class ConfigInt(ConfigParameter):
         def loadPara(self, spinbox):
-            spinbox.insert(0, str(self.selfValue))
+            spinbox.insert(0, str(self.value))
 
 
 
     MCG_VERSION = "build"
     PATH_FFMPEG = ".\\ffmpeg\\bin\\ffmpeg.exe"
-    pathImport = None
-    pathExport = None
-    width = None
-    height = None
-    bitrate = None
+    pathImport = ConfigPath()
+    pathExport = ConfigPath()
+    width = ConfigInt()
+    height = ConfigInt()
+    bitrate = ConfigInt()
     configList = [pathImport, 
-                       pathExport,
-                       width,
-                       height,
-                       bitrate]
+        pathExport,
+        width,
+        height,
+        bitrate]
 
     MainWindow = Tk()
     MainWindow.title("MCG " + MCG_VERSION)
