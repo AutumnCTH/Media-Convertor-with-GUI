@@ -53,6 +53,28 @@ def main():
         convertCmd = [PATH_FFMPEG, "-i", pathImport, "-b:v", f"{bitrate}k", "-s", f"{width}x{height}", pathExport]
         sysCommand(convertCmd)
 
+    class ConfigParameter:
+        dataType = ''
+        gridPosition = 0
+        selfValue = None
+        def __init__(self, dataType, gridPosition):
+            self.dataType = dataType
+            self.gridPosition = gridPosition
+
+        def getValue(self, selfValue):
+            self.selfValue = selfValue
+
+
+    class ConfigPath(ConfigParameter):
+        def loadPara(self):
+            Label(MainWindow, text=fr"{self.selfValue}").grid(row=self.gridPosition, column=2, sticky=W)
+                #gridPosition Import is 0, export = 1
+
+    class ConfigInt(ConfigParameter):
+        def loadPara(self, spinbox):
+            spinbox.insert(0, str(self.selfValue))
+
+
 
     MCG_VERSION = "build"
     PATH_FFMPEG = ".\\ffmpeg\\bin\\ffmpeg.exe"
