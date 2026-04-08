@@ -96,19 +96,19 @@ def main():
     Button(MainWindow, text="Save as", command=saveFile).grid(
         row=1, column=1, sticky=W)
     Label(MainWindow, text="Width(px):").grid(row=2, column=0, sticky=W)
-    Label(MainWindow, text="Height(px):").grid(row=2, column=2, sticky=W)
-    Label(MainWindow, text="Bitrate(kbps):").grid(row=2, column=4, sticky=W)
+    Label(MainWindow, text="Height(px):").grid(row=3, column=0, sticky=W)
+    Label(MainWindow, text="Bitrate(kbps):").grid(row=4, column=0, sticky=W)
 
     WidthSpinbox = Spinbox(MainWindow, from_=0, to=300000, width=5)
     WidthSpinbox.grid(row=2, column=1, sticky=W)
     WidthSpinbox.set(640)
 
     HeightSpinbox = Spinbox(MainWindow, from_=0, to=300000, width=5)
-    HeightSpinbox.grid(row=2, column=3, sticky=W)
+    HeightSpinbox.grid(row=3, column=1, sticky=W)
     HeightSpinbox.set(360)
 
     BitrateSpinbox = Spinbox(MainWindow, from_=0, to=300000, width=5)
-    BitrateSpinbox.grid(row=2, column=5, sticky=W)
+    BitrateSpinbox.grid(row=4, column=1, sticky=W)
     BitrateSpinbox.set(500)
 
     pathImport = ConfigPath(0)
@@ -122,8 +122,8 @@ def main():
         height,
         bitrate]
 
-    Button(MainWindow, text="Save Config", command=saveConfig).grid(row=3, column=0, sticky=W)
-    Button(MainWindow, text="Load Config", command=loadConfig).grid(row=3, column=1, sticky=W)
+    Button(MainWindow, text="Save Config", command=saveConfig).grid(row=5, column=0, sticky=W)
+    Button(MainWindow, text="Load Config", command=loadConfig).grid(row=5, column=1, sticky=W)
     Button(MainWindow, text="Start", command=convert).grid(sticky=E)
     Button(MainWindow, text="Quit", command=quit).grid(sticky=E)
 
