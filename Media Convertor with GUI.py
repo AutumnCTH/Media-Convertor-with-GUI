@@ -109,7 +109,7 @@ def main():
 
     BitrateSpinbox = Spinbox(MainWindow, from_=0, to=300000, width=5)
     BitrateSpinbox.grid(row=2, column=5, sticky=W)
-    BitrateSpinbox.set(360)
+    BitrateSpinbox.set(500)
 
     pathImport = ConfigPath(0)
     pathExport = ConfigPath(1)
