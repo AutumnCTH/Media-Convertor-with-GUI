@@ -13,81 +13,78 @@ def main():
     def importFile():
         nonlocal pathImport
         pathImport.getValue(filedialog.askopenfilename())
-        Label(MainWindow, text=fr"{pathImport}").grid(row=0, column=2, sticky=W)
+        Label(MainWindow, text = pathImport.value).grid(row=0, column=2, sticky=W)
 
 
     def saveFile():
         nonlocal pathImport, pathExport
         pathExport.getValue(filedialog.asksaveasfilename())
-        Label(MainWindow, text=fr"{pathExport}").grid(row=1, column=2, sticky=W)
+        Label(MainWindow, text = pathExport.value).grid(row=1, column=2, sticky=W)
 
 
     def loadConfig():
         pathLoadConfig = filedialog.askopenfilename()
         configFile = open(pathLoadConfig, 'r')
         for i in configList:
-            i = configFile.readline()
+            line = configFile.readline()
+            if line.endswith('\n'):
+                line = line[:-1]    #删除换行符
+            i.getValue(line)
+            i.loadPara()
             
 
     def saveConfig():
         pathSaveConfig = filedialog.asksaveasfilename()
         getParameters()
         configFile = open(pathSaveConfig, 'w')
-        
         for i in configList:
-            configFile.writelines(str(i.selfValue) + "\n")
-
+            configFile.writelines(str(i.value) + "\n") #VSCode检测不到i作为实例的成员value，实际可以运行
         configFile.close()
 
 
     def getParameters():
         nonlocal width, height, bitrate
 
-        width.getValue(WidthSpinbox.get())
-        height.getValue(HeightSpinbox.get())
-        bitrate.getValue(BitrateSpinbox.get())
+        width.getValue(int(WidthSpinbox.get()))
+        height.getValue(int(HeightSpinbox.get()))
+        bitrate.getValue(int(BitrateSpinbox.get()))
 
 
     def convert():
         getParameters()
-        convertCmd = [PATH_FFMPEG, "-i", pathImport, "-b:v", f"{bitrate}k", "-s", f"{width}x{height}", pathExport]
+        convertCmd = [PATH_FFMPEG, "-i", pathImport.value, "-b:v", f"{bitrate.value}k", "-s", f"{width.value}x{height.value}", pathExport.value]
         sysCommand(convertCmd)
 
+
     class ConfigParameter:
-        dataType = ''
-        gridPosition = 0
         value = None
-        def __init__(self, dataType, gridPosition):
-            self.dataType = dataType
-            self.gridPosition = gridPosition
 
         def getValue(self, value):
             self.value = value
 
 
     class ConfigPath(ConfigParameter):
+        def __init__(self, gridPosition):
+            self.gridPosition = gridPosition
+
         def loadPara(self):
             Label(MainWindow, text=fr"{self.value}").grid(row=self.gridPosition, column=2, sticky=W)
                 #gridPosition Import is 0, export = 1
 
+
     class ConfigInt(ConfigParameter):
-        def loadPara(self, spinbox):
-            spinbox.insert(0, str(self.value))
+        spinbox = None
+        def __init__(self, spinbox = None):
+            self.spinbox = spinbox
+
+        def loadPara(self):
+            self.spinbox.set(self.value)
 
 
 
     MCG_VERSION = "build"
     PATH_FFMPEG = ".\\ffmpeg\\bin\\ffmpeg.exe"
-    pathImport = ConfigPath()
-    pathExport = ConfigPath()
-    width = ConfigInt()
-    height = ConfigInt()
-    bitrate = ConfigInt()
-    configList = [pathImport, 
-        pathExport,
-        width,
-        height,
-        bitrate]
+    
 
     MainWindow = Tk()
     MainWindow.title("MCG " + MCG_VERSION)
@@ -104,15 +101,26 @@ def main():
 
     WidthSpinbox = Spinbox(MainWindow, from_=0, to=300000, width=5)
     WidthSpinbox.grid(row=2, column=1, sticky=W)
-    WidthSpinbox.insert(0, "640")
+    WidthSpinbox.set(640)
 
     HeightSpinbox = Spinbox(MainWindow, from_=0, to=300000, width=5)
     HeightSpinbox.grid(row=2, column=3, sticky=W)
-    HeightSpinbox.insert(0, "360")
+    HeightSpinbox.set(360)
 
     BitrateSpinbox = Spinbox(MainWindow, from_=0, to=300000, width=5)
     BitrateSpinbox.grid(row=2, column=5, sticky=W)
-    BitrateSpinbox.insert(0, "1000")
+    BitrateSpinbox.set(360)
+
+    pathImport = ConfigPath(0)
+    pathExport = ConfigPath(1)
+    width = ConfigInt(WidthSpinbox)
+    height = ConfigInt(HeightSpinbox)
+    bitrate = ConfigInt(BitrateSpinbox)
+    configList = [pathImport, 
+        pathExport,
+        width,
+        height,
+        bitrate]
 
     Button(MainWindow, text="Save Config", command=saveConfig).grid(row=3, column=0, sticky=W)
     Button(MainWindow, text="Load Config", command=loadConfig).grid(row=3, column=1, sticky=W)
@@ -121,6 +129,8 @@ def main():
 
 
     MainWindow.mainloop()
+
+    
 
 if __name__ == "__main__":
     main()
