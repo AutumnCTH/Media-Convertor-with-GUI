@@ -7,90 +7,113 @@ from subprocess import Popen
 
 def main():
     def sysCommand(inputCommand: list):
+        """调用shell"""
+
         shellResult = Popen(inputCommand)
         return shellResult.returncode
-    
+
     def importFile():
+        """向用户请求导入文件路径"""
+
         nonlocal pathImport
         pathImport.getValue(filedialog.askopenfilename())
         pathImport.loadPara()
 
-
     def saveFile():
-        nonlocal pathImport, pathExport
+        """向用户请求导出文件路径"""
+
+        nonlocal pathExport
         pathExport.getValue(filedialog.asksaveasfilename())
         pathExport.loadPara()
 
-
     def loadConfig():
+        """读取用户指定配置"""
+
         pathLoadConfig = filedialog.askopenfilename()
-        configFile = open(pathLoadConfig, 'r')
+        configFile = open(pathLoadConfig, "r")
 
         for i in configList:
             line = configFile.readline()
-            if line.endswith('\n'):
-                line = line[:-1]    #删除换行符
+            if line.endswith("\n"):
+                line = line[:-1]  # 删除换行符
 
             i.getValue(line)
             i.loadPara()
-            
 
     def saveConfig():
+        """向用户请求导出配置文件"""
+
         pathSaveConfig = filedialog.asksaveasfilename()
         getParameters()
-        configFile = open(pathSaveConfig, 'w')
+        configFile = open(pathSaveConfig, "w")
         for i in configList:
-            configFile.writelines(str(i.value) + "\n") #VSCode检测不到i作为实例的成员value，实际可以运行
+            configFile.writelines(
+                str(i.value) + "\n"
+            )  # VSCode检测不到i作为实例的成员value，实际可以运行
         configFile.close()
 
-
     def getParameters():
+        """刷新参数"""
+
         nonlocal width, height, bitrate, pathImport, pathExport
 
-        width.getValue(int(WidthSpinbox.get()))
-        height.getValue(int(HeightSpinbox.get()))
-        bitrate.getValue(int(BitrateSpinbox.get()))
+        width.getValue(WidthSpinbox.get())
+        height.getValue(HeightSpinbox.get())
+        bitrate.getValue(BitrateSpinbox.get())
         pathImport.getValue(ImportPathEntry.get())
         pathExport.getValue(ExportPathEntry.get())
 
-
     def convert():
-        getParameters()
-        convertCmd = [PATH_FFMPEG, "-i", pathImport.value, "-b:v", f"{bitrate.value}k", "-s", f"{width.value}x{height.value}", pathExport.value]
-        sysCommand(convertCmd)
+        """调用ffmpeg"""
 
+        getParameters()
+        convertCmd = [
+            PATH_FFMPEG,
+            "-i",
+            pathImport.value,
+            "-b:v",
+            f"{bitrate.value}k",
+            "-s",
+            f"{width.value}x{height.value}",
+            pathExport.value,
+        ]
+        sysCommand(convertCmd)
 
     class ConfigParameter:
         value = None
         widget = None
 
-        def __init__(self, spinbox = None):
-            self.widget = spinbox
+        def __init__(self, widget=None):
+            self.widget = widget
 
         def getValue(self, value):
-            self.value = value
+            self.value = str(value)
 
         def loadPara(self):
             self.widget.set(self.value)
 
+    class ConfigPath(ConfigParameter):
+        def loadPara(self):
+            self.widget.delete(0, END)
+            self.widget.insert(0, self.value)
 
 
-    MCG_VERSION = "build"
+    MCG_VERSION = "dev"
     PATH_FFMPEG = ".\\ffmpeg\\bin\\ffmpeg.exe"
-    
 
     MainWindow = Tk()
     MainWindow.title("MCG " + MCG_VERSION)
 
     Label(MainWindow, text="Import File:").grid(row=0, sticky=W)
-    Button(MainWindow, text="Choose File", command=importFile).grid(row=0, column=1, sticky=W)
-    ImportPathEntry = Entry(exportselection=0)
+    Button(MainWindow, text="Choose File", command=importFile).grid(
+        row=0, column=1, sticky=W
+    )
+    ImportPathEntry = Entry(exportselection=0, width=60)
     ImportPathEntry.grid(row=0, column=2, sticky=W)
 
     Label(MainWindow, text="Export File:").grid(row=1, sticky=W)
-    Button(MainWindow, text="Save as", command=saveFile).grid(
-        row=1, column=1, sticky=W)
-    ExportPathEntry = Entry(exportselection=0)
+    Button(MainWindow, text="Save as", command=saveFile).grid(row=1, column=1, sticky=W)
+    ExportPathEntry = Entry(exportselection=0, width=60)
     ExportPathEntry.grid(row=1, column=2, sticky=W)
 
     Label(MainWindow, text="Width(px):").grid(row=2, column=0, sticky=W)
@@ -109,26 +132,24 @@ def main():
     BitrateSpinbox.grid(row=4, column=1, sticky=W)
     BitrateSpinbox.set(500)
 
-    pathImport = ConfigParameter(ImportPathEntry)
-    pathExport = ConfigParameter(ExportPathEntry)
+    pathImport = ConfigPath(ImportPathEntry)
+    pathExport = ConfigPath(ExportPathEntry)
     width = ConfigParameter(WidthSpinbox)
     height = ConfigParameter(HeightSpinbox)
     bitrate = ConfigParameter(BitrateSpinbox)
-    configList = [pathImport, 
-        pathExport,
-        width,
-        height,
-        bitrate]
+    configList = [pathImport, pathExport, width, height, bitrate]
 
-    Button(MainWindow, text="Save Config", command=saveConfig).grid(row=5, column=0, sticky=W)
-    Button(MainWindow, text="Load Config", command=loadConfig).grid(row=5, column=1, sticky=W)
+    Button(MainWindow, text="Save Config", command=saveConfig).grid(
+        row=5, column=0, sticky=W
+    )
+    Button(MainWindow, text="Load Config", command=loadConfig).grid(
+        row=5, column=1, sticky=W
+    )
     Button(MainWindow, text="Start", command=convert).grid(sticky=E)
     Button(MainWindow, text="Quit", command=quit).grid(sticky=E)
 
-
     MainWindow.mainloop()
 
-    
 
 if __name__ == "__main__":
     main()
