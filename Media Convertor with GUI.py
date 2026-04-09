@@ -69,6 +69,7 @@ def main():
         getParameters()
         convertCmd = [
             PATH_FFMPEG,
+            "-y",
             "-i",
             pathImport.value,
             "-b:v",
@@ -96,7 +97,6 @@ def main():
         def loadPara(self):
             self.widget.delete(0, END)
             self.widget.insert(0, self.value)
-
 
     MCG_VERSION = "dev"
     PATH_FFMPEG = ".\\ffmpeg\\bin\\ffmpeg.exe"
