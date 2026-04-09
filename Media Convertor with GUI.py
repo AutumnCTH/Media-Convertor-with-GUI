@@ -13,22 +13,24 @@ def main():
     def importFile():
         nonlocal pathImport
         pathImport.getValue(filedialog.askopenfilename())
-        Label(MainWindow, text = pathImport.value).grid(row=0, column=2, sticky=W)
+        pathImport.loadPara()
 
 
     def saveFile():
         nonlocal pathImport, pathExport
         pathExport.getValue(filedialog.asksaveasfilename())
-        Label(MainWindow, text = pathExport.value).grid(row=1, column=2, sticky=W)
+        pathExport.loadPara()
 
 
     def loadConfig():
         pathLoadConfig = filedialog.askopenfilename()
         configFile = open(pathLoadConfig, 'r')
+
         for i in configList:
             line = configFile.readline()
             if line.endswith('\n'):
                 line = line[:-1]    #删除换行符
+
             i.getValue(line)
             i.loadPara()
             
@@ -43,11 +45,13 @@ def main():
 
 
     def getParameters():
-        nonlocal width, height, bitrate
+        nonlocal width, height, bitrate, pathImport, pathExport
 
         width.getValue(int(WidthSpinbox.get()))
         height.getValue(int(HeightSpinbox.get()))
         bitrate.getValue(int(BitrateSpinbox.get()))
+        pathImport.getValue(ImportPathEntry.get())
+        pathExport.getValue(ExportPathEntry.get())
 
 
     def convert():
@@ -58,27 +62,16 @@ def main():
 
     class ConfigParameter:
         value = None
+        widget = None
+
+        def __init__(self, spinbox = None):
+            self.widget = spinbox
 
         def getValue(self, value):
             self.value = value
 
-
-    class ConfigPath(ConfigParameter):
-        def __init__(self, gridPosition):
-            self.gridPosition = gridPosition
-
         def loadPara(self):
-            Label(MainWindow, text=fr"{self.value}").grid(row=self.gridPosition, column=2, sticky=W)
-                #gridPosition Import is 0, export = 1
-
-
-    class ConfigInt(ConfigParameter):
-        spinbox = None
-        def __init__(self, spinbox = None):
-            self.spinbox = spinbox
-
-        def loadPara(self):
-            self.spinbox.set(self.value)
+            self.widget.set(self.value)
 
 
 
@@ -90,11 +83,16 @@ def main():
     MainWindow.title("MCG " + MCG_VERSION)
 
     Label(MainWindow, text="Import File:").grid(row=0, sticky=W)
+    Button(MainWindow, text="Choose File", command=importFile).grid(row=0, column=1, sticky=W)
+    ImportPathEntry = Entry(exportselection=0)
+    ImportPathEntry.grid(row=0, column=2, sticky=W)
+
     Label(MainWindow, text="Export File:").grid(row=1, sticky=W)
-    Button(MainWindow, text="Choose File", command=importFile).grid(
-        row=0, column=1, sticky=W)
     Button(MainWindow, text="Save as", command=saveFile).grid(
         row=1, column=1, sticky=W)
+    ExportPathEntry = Entry(exportselection=0)
+    ExportPathEntry.grid(row=1, column=2, sticky=W)
+
     Label(MainWindow, text="Width(px):").grid(row=2, column=0, sticky=W)
     Label(MainWindow, text="Height(px):").grid(row=3, column=0, sticky=W)
     Label(MainWindow, text="Bitrate(kbps):").grid(row=4, column=0, sticky=W)
@@ -111,11 +109,11 @@ def main():
     BitrateSpinbox.grid(row=4, column=1, sticky=W)
     BitrateSpinbox.set(500)
 
-    pathImport = ConfigPath(0)
-    pathExport = ConfigPath(1)
-    width = ConfigInt(WidthSpinbox)
-    height = ConfigInt(HeightSpinbox)
-    bitrate = ConfigInt(BitrateSpinbox)
+    pathImport = ConfigParameter(ImportPathEntry)
+    pathExport = ConfigParameter(ExportPathEntry)
+    width = ConfigParameter(WidthSpinbox)
+    height = ConfigParameter(HeightSpinbox)
+    bitrate = ConfigParameter(BitrateSpinbox)
     configList = [pathImport, 
         pathExport,
         width,
