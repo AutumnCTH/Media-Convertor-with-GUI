@@ -83,6 +83,14 @@ def main():
     def spinboxOnlyNumber(event):
         if not event.char.isdigit() and event.char != "\b":
             return "break"
+        
+    class ParameterSpinbox(Spinbox):
+        def __init__(self,master = None, row=0, from_ = 0, to = 0, width = 6, values = None, text=""):
+            super().__init__(master, from_=from_, to=to, width=width)
+            self.grid(row=row, column=1, sticky=W)
+            self.set(values)
+            self.bind('<Key>', spinboxOnlyNumber)
+            Label(MainWindow, text=text).grid(row=row, column=0, sticky=W)
 
     class ConfigParameter:
         value = None
@@ -120,22 +128,9 @@ def main():
     ExportPathEntry = Entry(exportselection=0, width=60)
     ExportPathEntry.grid(row=1, column=2, sticky=W)
 
-    Label(MainWindow, text="Width(px):").grid(row=2, column=0, sticky=W)
-    Label(MainWindow, text="Height(px):").grid(row=3, column=0, sticky=W)
-    Label(MainWindow, text="Bitrate(kbps):").grid(row=4, column=0, sticky=W)
-
-    WidthSpinbox = Spinbox(MainWindow, from_=0, to=300000, width=5)
-    WidthSpinbox.grid(row=2, column=1, sticky=W)
-    WidthSpinbox.set(640)
-    WidthSpinbox.bind("<Key>", spinboxOnlyNumber)
-
-    HeightSpinbox = Spinbox(MainWindow, from_=0, to=300000, width=5)
-    HeightSpinbox.grid(row=3, column=1, sticky=W)
-    HeightSpinbox.set(360)
-
-    BitrateSpinbox = Spinbox(MainWindow, from_=0, to=300000, width=5)
-    BitrateSpinbox.grid(row=4, column=1, sticky=W)
-    BitrateSpinbox.set(500)
+    WidthSpinbox = ParameterSpinbox(MainWindow, row=2, values=640, text="Width(px):")
+    HeightSpinbox = ParameterSpinbox(MainWindow, row=3, values=360, text="Height(px):")
+    BitrateSpinbox = ParameterSpinbox(MainWindow, row=4, values=500, text="Bitrate(kbps):")
 
     pathImport = ConfigPath(ImportPathEntry)
     pathExport = ConfigPath(ExportPathEntry)
