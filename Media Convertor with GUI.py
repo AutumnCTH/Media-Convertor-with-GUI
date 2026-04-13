@@ -3,6 +3,7 @@ from tkinter.ttk import *
 from tkinter import filedialog
 from tkinter import messagebox
 from subprocess import Popen
+import os
 
 
 def main():
@@ -67,6 +68,8 @@ def main():
         """调用ffmpeg"""
 
         getParameters()
+        if not ((pathImport.checkPath() and pathExport.checkPath())):
+            return
         convertCmd = [
             PATH_FFMPEG,
             "-y",
@@ -80,17 +83,21 @@ def main():
         ]
         sysCommand(convertCmd)
 
-    def spinboxOnlyNumber(event):
-        if not event.char.isdigit() and event.char != "\b":
-            return "break"
-        
     class ParameterSpinbox(Spinbox):
-        def __init__(self,master = None, row=0, from_ = 0, to = 0, width = 6, values = None, text=""):
+        def __init__(
+            self, master=None, row=0, from_=0, to=0, width=6, values=None, text=""
+        ):
             super().__init__(master, from_=from_, to=to, width=width)
             self.grid(row=row, column=1, sticky=W)
             self.set(values)
-            self.bind('<Key>', spinboxOnlyNumber)
+            self.bind("<Key>", self.spinboxOnlyNumber)  # 阻止向Spinbox内输入非数字
             Label(MainWindow, text=text).grid(row=row, column=0, sticky=W)
+
+        def spinboxOnlyNumber(self, event):
+            """阻止向Spinbox内输入非数字"""
+
+            if not event.char.isdigit() and event.char != "\b":
+                return "break"
 
     class ConfigParameter:
         value = None
@@ -110,7 +117,15 @@ def main():
             self.widget.delete(0, END)
             self.widget.insert(0, self.value)
 
-    MCG_VERSION = "dev"
+        def checkPath(self):
+            if not os.path.exists(self.value):
+                messagebox.showerror(
+                    title="pathError", message="The path doesn't existed!"
+                )
+                return False
+            return True
+
+    MCG_VERSION = "alpha"
     PATH_FFMPEG = ".\\ffmpeg\\bin\\ffmpeg.exe"
 
     MainWindow = Tk()
@@ -130,7 +145,9 @@ def main():
 
     WidthSpinbox = ParameterSpinbox(MainWindow, row=2, values=640, text="Width(px):")
     HeightSpinbox = ParameterSpinbox(MainWindow, row=3, values=360, text="Height(px):")
-    BitrateSpinbox = ParameterSpinbox(MainWindow, row=4, values=500, text="Bitrate(kbps):")
+    BitrateSpinbox = ParameterSpinbox(
+        MainWindow, row=4, values=500, text="Bitrate(kbps):"
+    )
 
     pathImport = ConfigPath(ImportPathEntry)
     pathExport = ConfigPath(ExportPathEntry)
@@ -145,8 +162,8 @@ def main():
     Button(MainWindow, text="Load Config", command=loadConfig).grid(
         row=5, column=1, sticky=W
     )
-    Button(MainWindow, text="Start", command=convert).grid(sticky=E)
-    Button(MainWindow, text="Quit", command=quit).grid(sticky=E)
+    Button(MainWindow, text="Start", command=convert).grid(row=4, column=2, sticky=E)
+    Button(MainWindow, text="Quit", command=quit).grid(row=5, column=2, sticky=E)
 
     MainWindow.mainloop()
 
