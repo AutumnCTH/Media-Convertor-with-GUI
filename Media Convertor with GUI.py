@@ -80,6 +80,10 @@ def main():
         ]
         sysCommand(convertCmd)
 
+    def spinboxOnlyNumber(event):
+        if not event.char.isdigit() and event.char != "\b":
+            return "break"
+
     class ConfigParameter:
         value = None
         widget = None
@@ -123,6 +127,7 @@ def main():
     WidthSpinbox = Spinbox(MainWindow, from_=0, to=300000, width=5)
     WidthSpinbox.grid(row=2, column=1, sticky=W)
     WidthSpinbox.set(640)
+    WidthSpinbox.bind("<Key>", spinboxOnlyNumber)
 
     HeightSpinbox = Spinbox(MainWindow, from_=0, to=300000, width=5)
     HeightSpinbox.grid(row=3, column=1, sticky=W)
