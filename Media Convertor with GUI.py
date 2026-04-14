@@ -123,7 +123,15 @@ def main():
         def checkPath(self):
             if not os.path.exists(self.value):
                 messagebox.showerror(
-                    title="pathErr", message="The path doesn't existed!"
+                    title="pathError", message="The path of file to import doesn't existed!"
+                )
+                return False
+            return True
+        
+        def checkDir(self):
+            if not os.path.isdir(os.path.dirname(self.value)):
+                messagebox.showerror(
+                    title="pathError", message="The path of file to export doesn't existed!"
                 )
                 return False
             return True
