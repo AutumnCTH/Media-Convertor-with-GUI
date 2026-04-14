@@ -17,20 +17,20 @@ def main():
         """向用户请求导入文件路径"""
 
         nonlocal pathImport
-        pathImport.getValue(filedialog.askopenfilename())
+        pathImport.getValue(filedialog.askopenfilename(filetypes=videoFiletypes))
         pathImport.loadPara()
 
     def saveFile():
         """向用户请求导出文件路径"""
 
         nonlocal pathExport
-        pathExport.getValue(filedialog.asksaveasfilename())
+        pathExport.getValue(filedialog.asksaveasfilename(filetypes=videoFiletypes))
         pathExport.loadPara()
 
     def loadConfig():
         """读取用户指定配置"""
 
-        pathLoadConfig = filedialog.askopenfilename()
+        pathLoadConfig = filedialog.askopenfilename(filetypes=configFiletypes)
         configFile = open(pathLoadConfig, "r")
 
         for i in configList:
@@ -44,7 +44,7 @@ def main():
     def saveConfig():
         """向用户请求导出配置文件"""
 
-        pathSaveConfig = filedialog.asksaveasfilename()
+        pathSaveConfig = filedialog.asksaveasfilename(filetypes=configFiletypes)
         getParameters()
         configFile = open(pathSaveConfig, "w")
         for i in configList:
@@ -68,7 +68,10 @@ def main():
         """调用ffmpeg"""
 
         getParameters()
-        if not ((pathImport.checkPath() and pathExport.checkPath())):
+        if not (
+            (pathImport.checkPath() and pathExport.checkPath())
+            and (pathImport.checkType() and pathExport.checkType())
+        ):
             return
         convertCmd = [
             PATH_FFMPEG,
@@ -120,13 +123,23 @@ def main():
         def checkPath(self):
             if not os.path.exists(self.value):
                 messagebox.showerror(
-                    title="pathError", message="The path doesn't existed!"
+                    title="pathErr", message="The path doesn't existed!"
                 )
                 return False
             return True
 
+        def checkType(self):
+            typeList = [".mp4", ".mkv", ".flv", ".mov"]
+            for i in typeList:
+                if self.value.endswith(i):
+                    return True
+            messagebox.showerror(title="typeErr", message="The type isn't supported!")
+            return False
+
     MCG_VERSION = "v0.4.0-dev"
     PATH_FFMPEG = ".\\ffmpeg\\bin\\ffmpeg.exe"
+    videoFiletypes = [("Video", "*.mp4 *.mkv *.flv *.mov")]
+    configFiletypes = [("Config", "*.mcg")]
 
     MainWindow = Tk()
     MainWindow.title("MCG " + MCG_VERSION)
