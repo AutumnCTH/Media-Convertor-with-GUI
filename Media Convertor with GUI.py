@@ -31,6 +31,8 @@ def main():
         """读取用户指定配置"""
 
         pathLoadConfig = filedialog.askopenfilename(filetypes=configFiletypes)
+        if not pathLoadConfig:
+            return
         configFile = open(pathLoadConfig, "r")
 
         for i in configList:
@@ -45,6 +47,8 @@ def main():
         """向用户请求导出配置文件"""
 
         pathSaveConfig = filedialog.asksaveasfilename(filetypes=configFiletypes)
+        if not pathSaveConfig:
+            return
         getParameters()
         configFile = open(pathSaveConfig, "w")
         for i in configList:
@@ -123,15 +127,17 @@ def main():
         def checkPath(self):
             if not os.path.exists(self.value):
                 messagebox.showerror(
-                    title="pathError", message="The path of file to import doesn't existed!"
+                    title="pathError",
+                    message="The path of file to import doesn't existed!",
                 )
                 return False
             return True
-        
+
         def checkDir(self):
             if not os.path.isdir(os.path.dirname(self.value)):
                 messagebox.showerror(
-                    title="pathError", message="The path of file to export doesn't existed!"
+                    title="pathError",
+                    message="The path of file to export doesn't existed!",
                 )
                 return False
             return True
@@ -144,7 +150,7 @@ def main():
             messagebox.showerror(title="typeErr", message="The type isn't supported!")
             return False
 
-    MCG_VERSION = "v0.4.0-dev"
+    MCG_VERSION = "dev"
     PATH_FFMPEG = ".\\ffmpeg\\bin\\ffmpeg.exe"
     videoFiletypes = [("Video", "*.mp4 *.mkv *.flv *.mov")]
     configFiletypes = [("Config", "*.mcg")]
