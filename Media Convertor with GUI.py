@@ -73,7 +73,7 @@ def main():
 
         getParameters()
         if not (
-            (pathImport.checkPath() and pathExport.checkPath())
+            (pathImport.checkPath() and pathExport.checkDir())
             and (pathImport.checkType() and pathExport.checkType())
         ):
             return
