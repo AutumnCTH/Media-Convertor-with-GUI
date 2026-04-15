@@ -92,7 +92,7 @@ def main():
 
     class ParameterSpinbox(Spinbox):
         def __init__(
-            self, master=None, row=0, from_=0, to=0, width=6, values=None, text=""
+            self, master=None, row=0, from_=0, to=300000, width=6, values=None, text=""
         ):
             super().__init__(master, from_=from_, to=to, width=width)
             self.grid(row=row, column=1, sticky=W)
@@ -102,8 +102,17 @@ def main():
 
         def spinboxOnlyNumber(self, event):
             """阻止向Spinbox内输入非数字"""
-
-            if not event.char.isdigit() and event.char != "\b":
+            allowedKeys = [
+                "BackSpace",
+                "Delete",
+                "Left",
+                "Right",
+                "Up",
+                "Down",
+                "Home",
+                "End",
+            ]
+            if not event.char.isdigit() and event.keysym not in allowedKeys:
                 return "break"
 
     class ConfigParameter:
