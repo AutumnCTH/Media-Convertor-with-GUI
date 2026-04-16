@@ -23,8 +23,13 @@ def main():
     def saveFile():
         """向用户请求导出文件路径"""
 
-        nonlocal pathExport
-        pathExport.getValue(filedialog.asksaveasfilename(filetypes=videoFiletypes))
+        nonlocal pathExport, saveType
+        pathExport.getValue(
+            filedialog.asksaveasfilename(
+                filetypes=videoFiletypes, typevariable=saveType, defaultextension=".mp4"
+            )
+        )
+        pathExport.isTypeSupported()
         pathExport.loadPara()
 
     def loadConfig():
@@ -74,7 +79,7 @@ def main():
         getParameters()
         if not (
             (pathImport.checkPath() and pathExport.checkDir())
-            and (pathImport.checkType() and pathExport.checkType())
+            and (pathImport.isTypeSupported() and pathExport.isTypeSupported())
         ):
             return
         convertCmd = [
@@ -129,6 +134,7 @@ def main():
             self.widget.set(self.value)
 
     class ConfigPath(ConfigParameter):
+        typeList = [".mp4", ".mkv", ".flv", ".mov"]
         def loadPara(self):
             self.widget.delete(0, END)
             self.widget.insert(0, self.value)
@@ -136,7 +142,7 @@ def main():
         def checkPath(self):
             if not os.path.exists(self.value):
                 messagebox.showerror(
-                    title="pathError",
+                    title="pathErr",
                     message="The path of file to import doesn't existed!",
                 )
                 return False
@@ -145,27 +151,45 @@ def main():
         def checkDir(self):
             if not os.path.isdir(os.path.dirname(self.value)):
                 messagebox.showerror(
-                    title="pathError",
+                    title="pathErr",
                     message="The path of file to export doesn't existed!",
                 )
                 return False
             return True
 
-        def checkType(self):
-            typeList = [".mp4", ".mkv", ".flv", ".mov"]
-            for i in typeList:
+        def isTypeSupported(self):
+            for i in self.typeList:
                 if self.value.endswith(i):
                     return True
             messagebox.showerror(title="typeErr", message="The type isn't supported!")
             return False
+        
+        def completeTypeName(self):
+            for i in self.typeList:
+                if self.value.endswith(i):
+                    return
+            self.value += typeDict[saveType.get()]
 
     MCG_VERSION = "dev"
     PATH_FFMPEG = ".\\ffmpeg\\bin\\ffmpeg.exe"
-    videoFiletypes = [("Video", "*.mp4 *.mkv *.flv *.mov")]
+    videoFiletypes = [
+        ("MPEG-4", "*.mp4"),
+        ("Flash Video", "*.flv"),
+        ("Matroska Video", "*.mkv"),
+        ("QuickTime", "*.mov"),
+    ]
     configFiletypes = [("Config", "*.mcg")]
+    typeDict = {
+        "MPEG-4": ".mp4",
+        "Flash Video": ".flv",
+        "Matroska Video": ".mkv",
+        "QuickTime": ".mov",
+    }
 
     MainWindow = Tk()
     MainWindow.title("MCG " + MCG_VERSION)
+
+    saveType = StringVar(MainWindow, "")
 
     Label(MainWindow, text="Import File:").grid(row=0, sticky=W)
     Button(MainWindow, text="Choose File", command=importFile).grid(
